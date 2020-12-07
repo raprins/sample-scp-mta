@@ -75,7 +75,9 @@ type: com.sap.xs.hdi-container
 - Bundle application `mbt build -t ./`
 - Deploy using `cf deploy [something].mtar`
 
-#### Bind Service to local development (set up)
+
+### Set up Local development
+#### Bind Service to local development
 Setup environment for **local-dev**. Create or grab info of service binding, and put it inside file called **default-env.json**
 - Execute `cf env sample-service-srv > default-env.json` 
 - The file has to have the structure below :
@@ -115,4 +117,25 @@ Setup environment for **local-dev**. Create or grab info of service binding, and
   user:
    '70B68B5681E343219C61DE60CB25DE34_4DN7TEM4TSU7G6S8AN1E0N02G_RT' }
 [cds] - serving Manufacturing { at: '/manufacturing' }
+```
+
+#### Create test script
+- For that, create file with [filename].http
+
+```curl
+###
+GET http://localhost:4004/manufacturing/Products
+Accept: application/json
+
+
+###
+POST http://localhost:4004/manufacturing/Products
+Content-Type: application/json
+
+{
+    "ID": 1,
+    "name": "Air Jordan 11",
+    "description": "The one that the Airness wore in the movie Space Jam",
+    "imageUrl" : "https://images.wave.fr/images//air-jordan-11-concord-date-de-sortie-2.jpg"
+}
 ```

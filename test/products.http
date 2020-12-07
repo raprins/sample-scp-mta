@@ -1,0 +1,15 @@
+###
+GET http://localhost:4004/manufacturing/Products
+Accept: application/json
+
+
+###
+POST http://localhost:4004/manufacturing/Products
+Content-Type: application/json
+
+{
+    "ID": 1,
+    "name": "Air Jordan 11",
+    "description": "The one that the Airness wore in the movie Space Jam",
+    "imageUrl" : "https://images.wave.fr/images//air-jordan-11-concord-date-de-sortie-2.jpg"
+}
