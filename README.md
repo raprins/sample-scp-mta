@@ -74,3 +74,45 @@ type: com.sap.xs.hdi-container
 
 - Bundle application `mbt build -t ./`
 - Deploy using `cf deploy [something].mtar`
+
+#### Bind Service to local development (set up)
+Setup environment for **local-dev**. Create or grab info of service binding, and put it inside file called **default-env.json**
+- Execute `cf env sample-service-srv > default-env.json` 
+- The file has to have the structure below :
+```json
+{
+    "VCAP_SERVICES" : {...},
+    "VCAP_APPLICATION" : {...}
+}
+```
+- Change **package.json** to requires **"hana"**
+
+```json
+"cds": {
+        "requires": {
+            "db": {
+                "kind": "hana"
+            }
+        }
+    }
+```
+
+- When launching the project by `cds watch`
+
+```js
+[cds] - using bindings from: { registry: '~/.cds-services.json' }
+[cds] - connect to db > hana { certificate: '...',
+  driver: 'com.sap.db.jdbc.Driver',
+  hdi_password: '...',
+  hdi_user:
+   '70B68B5681E343219C61DE60CB25DE34_4DN7TEM4TSU7G6S8AN1E0N02G_DT',
+  host: 'zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com',
+  password: '...',
+  port: '21022',
+  schema: '70B68B5681E343219C61DE60CB25DE34',
+  url:
+   'jdbc:sap://zeus.hana.prod.us-east-1.whitney.dbaas.ondemand.com:21022?encrypt=true&validateCertificate=true&currentschema=70B68B5681E343219C61DE60CB25DE34',
+  user:
+   '70B68B5681E343219C61DE60CB25DE34_4DN7TEM4TSU7G6S8AN1E0N02G_RT' }
+[cds] - serving Manufacturing { at: '/manufacturing' }
+```
