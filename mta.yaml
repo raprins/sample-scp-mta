@@ -4,7 +4,7 @@
 ## approuter=
 _schema-version: '3.1'
 ID: sample-service
-version: 1.0.0
+version: 1.0.1
 description: "A simple CAP project."
 parameters:
   enable-parallel-deployments: true
@@ -18,7 +18,7 @@ build-parameters:
 
 modules:
  # --------------------- SERVER MODULE ------------------------
- - name: sample-service-srv
+ - name: store-service
  # ------------------------------------------------------------
    type: nodejs
    path: gen/srv
@@ -33,7 +33,7 @@ modules:
         srv-url: ${default-url}
 
  # -------------------- SIDECAR MODULE ------------------------
- - name: sample-service-db-deployer
+ - name: store-db-deployer
  # ------------------------------------------------------------
    type: hdb
    path: gen/db  

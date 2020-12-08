@@ -1,8 +1,9 @@
+using { cuid, managed } from '@sap/cds/common';
+
 namespace com.raprincis.schema;
 
 context models {
-    entity Product {
-        key ID : Integer;
+    entity Product : cuid, managed{
         name : String(30);
         description : String;
         imageUrl : String;
@@ -15,7 +16,7 @@ context models {
         number : Integer;
     }
 
-    entity Sale {
+    entity Sale : cuid, managed{
         key ID: Integer;
         items : Association to many SoldProduct on items.sale = $self;
     }

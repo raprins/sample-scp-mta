@@ -139,3 +139,5 @@ Content-Type: application/json
     "imageUrl" : "https://images.wave.fr/images//air-jordan-11-concord-date-de-sortie-2.jpg"
 }
 ```
+
+## Upgrade Data to inject aspects
