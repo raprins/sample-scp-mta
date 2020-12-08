@@ -140,4 +140,31 @@ Content-Type: application/json
 }
 ```
 
-## Upgrade Data to inject aspects
+## Upgrade Data to inject aspects, behavior
+
+To upgrade those fields, we can inject aspects : predefined fields that is already filled (AOP in java, I think)
+
+```js
+    using { cuid, managed } from '@sap/cds/common';
+    ...
+    entity Product : cuid, managed{
+        name : String(30);
+        description : String;
+        imageUrl : String;
+        type : String;
+    }
+```
+
+If we want to see the definition of **managed** in **'@sap/cds/common'**
+
+```js
+    /*
+    * Aspect to capture changes by user and name.
+    */
+    aspect managed {
+        createdAt  : Timestamp @cds.on.insert : $now;
+        createdBy  : User      @cds.on.insert : $user;
+        modifiedAt : Timestamp @cds.on.insert : $now  @cds.on.update : $now;
+        modifiedBy : User      @cds.on.insert : $user @cds.on.update : $user;
+    }
+```
