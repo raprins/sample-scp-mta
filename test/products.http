@@ -12,3 +12,7 @@ Content-Type: application/json
     "description": "The one that the Airness wore in the movie Space Jam",
     "imageUrl" : "https://images.wave.fr/images//air-jordan-11-concord-date-de-sortie-2.jpg"
 }
+
+
+###
+DELETE http://localhost:4004/manufacturing/Products/841b2af0-41a0-4229-9448-c0cc10d83952

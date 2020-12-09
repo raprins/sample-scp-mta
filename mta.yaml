@@ -25,6 +25,7 @@ modules:
    requires:
     # Resources extracted from CAP configuration
     - name: sample-service-db
+    - name: sample-destination
    parameters:
      host: store-api
    provides:
@@ -56,4 +57,9 @@ resources:
      service-plan: hdi-shared
    properties:
      hdi-service-name: ${service-name}
+ - name: sample-destination
+   type: destination
+   parameters:
+     service: destination
+     service-plan: lite 
 

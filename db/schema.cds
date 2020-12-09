@@ -20,4 +20,13 @@ context models {
         key ID: Integer;
         items : Association to many SoldProduct on items.sale = $self;
     }
+
+    entity Customers {
+        CustomerID : String;
+        ContactName: String; 
+        ContactTitle: String; 
+        Address: String;
+        City: String;
+    }
+
 }

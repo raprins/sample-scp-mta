@@ -142,6 +142,7 @@ Content-Type: application/json
 
 ## Upgrade Data to inject aspects, behavior
 
+
 To upgrade those fields, we can inject aspects : predefined fields that is already filled (AOP in java, I think)
 
 ```js
@@ -166,5 +167,127 @@ If we want to see the definition of **managed** in **'@sap/cds/common'**
         createdBy  : User      @cds.on.insert : $user;
         modifiedAt : Timestamp @cds.on.insert : $now  @cds.on.update : $now;
         modifiedBy : User      @cds.on.insert : $user @cds.on.update : $user;
+    }
+```
+
+## Link to another service (use of another OData)
+
+### Import definition
+Import a service metadata inside the project and import it `cds import srv/external/Northwind.edmx`
+
+> When importing, there are a lot of problem in the so called csn.json 
+
+As a result, the package.json has changed and it creates file **Northwind.csn**
+
+```json
+    ...
+    "scripts": {
+        "start": "npx cds run"
+    },
+    "cds": {
+        "requires": {
+        "db": {
+            "kind": "hana"
+        },
+        "Northwind": {
+            "kind": "odata",
+            "model": "srv/external/Northwind"
+        }
+        }
+    }
+    }
+```
+
+The terminal will prompt :
+```
+    user: sample-service $ cds import srv/external/Northwind.edmx
+    [cds] - updated ./package.json
+    [cds] - imported API to srv/external/Northwind.csn
+    > use it in your CDS models through the like of:
+
+    using { Northwind as external } from './external/Northwind.csn';
+```
+
+### Use Destination
+To use a service, import the following package :
+- @sap/xsenv
+
+
+#### Connect to a service 
+To connect to service, we have to connect via Oauth Service, in the VCAP_SERVICE (credentials)
+
+- Get the authentication config : in credential>url plus open id config
+```js
+    async function getDiscovery(url) {
+        const response = await axios.get(`${url}/.well-known/openid-configuration`)
+        return response.data
+    }
+```
+- Use [Token Logon](https://docs.cloudfoundry.org/api/uaa/version/74.29.0/index.html#token)
+
+```js
+async function _getClientCredentialToken(oauthTokenUrl, clientId, cliendSecret) {
+    const data = new URLSearchParams()
+    data.append('client_id', clientId)
+    data.append('client_secret', cliendSecret)
+    data.append('grant_type', 'client_credentials')
+
+    const response = await axios.post(`${oauthTokenUrl}`,data.toString(), {
+        headers : {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json"
+        }
+    })
+
+    return response.data
+}
+```
+
+-  After that [see this](https://api.sap.com/api/SAP_CP_CF_Connectivity_Destination/resource)
+```js
+
+    const DESTINATION_BASE_PATH = '/destination-configuration/v1'
+
+    async function getDestinationByName(credentials, destinationName) {
+        const token = await getToken(credentials)
+        const {access_token, token_type, expires_in, scope, jti} = token
+        const {uri} = credentials
+        const response = await axios.get(`${uri}${DESTINATION_BASE_PATH}/destinations/${destinationName}`, {
+            headers : {
+                'Authorization' : `${token_type} ${access_token}`
+            }
+        })
+
+        return response.data
+    }
+```
+
+### Call the service
+
+```js
+    module.exports = cds.service.impl(async service => {
+        service.on("READ","Customers", async context => {
+            const customers = await getCustomers()
+            return customers
+        })
+    })
+
+    async function getCustomers() {
+        const {credentials} = destination
+        const northwindDestination = await getDestinationByName(credentials, 'Northwind')
+        const {destinationConfiguration} = northwindDestination
+        const result = await axios.get(`${destinationConfiguration.URL}/Customers`, {
+            headers : {
+                'Accept': 'application/json'
+            }
+        })
+
+        return result.data.value.map(({CustomerID,ContactName,ContactTitle,Address,City}) => ({
+            CustomerID,
+            ContactName,
+            ContactTitle,
+            Address, 
+            City
+        }))
     }
 ```
